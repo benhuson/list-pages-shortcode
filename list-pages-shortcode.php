@@ -39,6 +39,7 @@ function shortcode_list_pages( $atts, $content, $tag ) {
 		'meta_key'    => '',
 		'meta_value'  => '',
 		'offset'      => '',
+		'post_status' => 'publish',
 		'exclude_current_page' => 0
 	);
 	
