@@ -40,7 +40,8 @@ function shortcode_list_pages( $atts, $content, $tag ) {
 		'meta_value'  => '',
 		'offset'      => '',
 		'post_status' => 'publish',
-		'exclude_current_page' => 0
+		'exclude_current_page' => 0,
+		'excerpt'     => 0
 	);
 	
 	// Merge user provided atts with defaults
@@ -56,6 +57,11 @@ function shortcode_list_pages( $atts, $content, $tag ) {
 	
 	$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 	
+	// Use custom walker
+	if ( $atts['excerpt'] ) {
+		$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
+	}
+	
 	// Create output
 	$out = wp_list_pages( $atts );
 	if ( !empty( $out ) )
@@ -64,6 +70,69 @@ function shortcode_list_pages( $atts, $content, $tag ) {
 	return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 	
 }
+
+class List_Pages_Shortcode {
+	
+	function List_Pages_Shortcode() {
+		add_filter( 'list_pages_shortcode_excerpt', array( $this, 'excerpt_filter' ) );
+	}
+
+	function excerpt_filter( $excerpt ) {
+		return '<div class="excerpt">' . $excerpt . '</div>';
+	}
+	
+}
+
+/**
+ * Create HTML list of pages.
+ * A copy of the WordPress Walker_Page class which adds an excerpt.
+ */
+class List_Pages_Shortcode_Walker_Page extends Walker_Page {
+	
+	function start_el( &$output, $page, $depth, $args, $current_page = 0 ) {
+		if ( $depth )
+			$indent = str_repeat("\t", $depth);
+		else
+			$indent = '';
+
+		extract($args, EXTR_SKIP);
+		$css_class = array('page_item', 'page-item-'.$page->ID);
+		if ( !empty($current_page) ) {
+			$_current_page = get_page( $current_page );
+			if ( in_array( $page->ID, $_current_page->ancestors ) )
+				$css_class[] = 'current_page_ancestor';
+			if ( $page->ID == $current_page )
+				$css_class[] = 'current_page_item';
+			elseif ( $_current_page && $page->ID == $_current_page->post_parent )
+				$css_class[] = 'current_page_parent';
+		} elseif ( $page->ID == get_option('page_for_posts') ) {
+			$css_class[] = 'current_page_parent';
+		}
+
+		$css_class = implode( ' ', apply_filters( 'page_css_class', $css_class, $page, $depth, $args, $current_page ) );
+
+		$output .= $indent . '<li class="' . $css_class . '"><a href="' . get_permalink($page->ID) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
+
+		if ( !empty($show_date) ) {
+			if ( 'modified' == $show_date )
+				$time = $page->post_modified;
+			else
+				$time = $page->post_date;
+
+			$output .= " " . mysql2date($date_format, $time);
+		}
+		
+		// Excerpt
+		if ( $args['excerpt'] ) {
+			$excerpt = apply_filters( 'get_the_excerpt', $page->post_excerpt );
+			$output .= apply_filters( 'list_pages_shortcode_excerpt', $excerpt );
+		}
+	}
+	
+}
+
+global $List_Pages_Shortcode;
+$List_Pages_Shortcode = new List_Pages_Shortcode();
 
 add_shortcode( 'child-pages', 'shortcode_list_pages' );
 add_shortcode( 'sibling-pages', 'shortcode_list_pages' );
