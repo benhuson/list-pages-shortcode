@@ -9,74 +9,85 @@ Version: 1.4
 Author URI: http://www.aaronharp.com
 */
 
-function shortcode_list_pages( $atts, $content, $tag ) {
-	
-	global $post;
-	
-	// Child Pages
-	$child_of = 0;
-	if ( $tag == 'child-pages' )
-		$child_of = $post->ID;
-	if ( $tag == 'sibling-pages' )
-		$child_of = $post->post_parent;
-	
-	// Set defaults
-	$defaults = array(
-		'class'       => $tag,
-		'depth'       => 0,
-		'show_date'   => '',
-		'date_format' => get_option( 'date_format' ),
-		'exclude'     => '',
-		'include'     => '',
-		'child_of'    => $child_of,
-		'title_li'    => '',
-		'authors'     => '',
-		'sort_column' => 'menu_order, post_title',
-		'sort_order'  => '',
-		'link_before' => '',
-		'link_after'  => '',
-		'exclude_tree'=> '',
-		'meta_key'    => '',
-		'meta_value'  => '',
-		'offset'      => '',
-		'post_status' => 'publish',
-		'exclude_current_page' => 0,
-		'excerpt'     => 0
-	);
-	
-	// Merge user provided atts with defaults
-	$atts = shortcode_atts( $defaults, $atts );
-	
-	// Set necessary params
-	$atts['echo'] = 0;
-	if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
-		if ( !empty( $atts['exclude'] ) )
-			$atts['exclude'] .= ',';
-		$atts['exclude'] .= $post->ID;
-	}
-	
-	$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
-	
-	// Use custom walker
-	if ( $atts['excerpt'] ) {
-		$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
-	}
-	
-	// Create output
-	$out = wp_list_pages( $atts );
-	if ( !empty( $out ) )
-		$out = '<ul class="' . $atts['class'] . '">' . $out . '</ul>';
-	
-	return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
-	
-}
-
 class List_Pages_Shortcode {
 	
+	/**
+	 * Constructor
+	 */
 	function List_Pages_Shortcode() {
+		add_shortcode( 'child-pages', array( $this, 'shortcode_list_pages' ) );
+		add_shortcode( 'sibling-pages', array( $this, 'shortcode_list_pages' ) );
+		add_shortcode( 'list-pages', array( $this, 'shortcode_list_pages' ) );
 		add_filter( 'list_pages_shortcode_excerpt', array( $this, 'excerpt_filter' ) );
 	}
-
+	
+	function shortcode_list_pages( $atts, $content, $tag ) {
+		global $post;
+		
+		// Child Pages
+		$child_of = 0;
+		if ( $tag == 'child-pages' )
+			$child_of = $post->ID;
+		if ( $tag == 'sibling-pages' )
+			$child_of = $post->post_parent;
+		
+		// Set defaults
+		$defaults = array(
+			'class'       => $tag,
+			'depth'       => 0,
+			'show_date'   => '',
+			'date_format' => get_option( 'date_format' ),
+			'exclude'     => '',
+			'include'     => '',
+			'child_of'    => $child_of,
+			'title_li'    => '',
+			'authors'     => '',
+			'sort_column' => 'menu_order, post_title',
+			'sort_order'  => '',
+			'link_before' => '',
+			'link_after'  => '',
+			'exclude_tree'=> '',
+			'meta_key'    => '',
+			'meta_value'  => '',
+			'offset'      => '',
+			'post_status' => 'publish',
+			'exclude_current_page' => 0,
+			'excerpt'     => 0
+		);
+		
+		// Merge user provided atts with defaults
+		$atts = shortcode_atts( $defaults, $atts );
+		
+		// Set necessary params
+		$atts['echo'] = 0;
+		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
+			if ( !empty( $atts['exclude'] ) )
+				$atts['exclude'] .= ',';
+			$atts['exclude'] .= $post->ID;
+		}
+		
+		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
+		
+		// Use custom walker
+		if ( $atts['excerpt'] ) {
+			$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
+		}
+		
+		// Create output
+		$out = wp_list_pages( $atts );
+		if ( !empty( $out ) )
+			$out = '<ul class="' . $atts['class'] . '">' . $out . '</ul>';
+		
+		return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
+	}
+	
+	/**
+	 * Excerpt Filter
+	 * Add a <div> around the excerpt by default.
+	 *
+	 * @param string $excerpt Excerpt.
+	 * @return string Filtered excerpt.
+	 */
 	function excerpt_filter( $excerpt ) {
 		return '<div class="excerpt">' . $excerpt . '</div>';
 	}
@@ -125,17 +136,22 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		// Excerpt
 		if ( $args['excerpt'] ) {
 			$excerpt = apply_filters( 'get_the_excerpt', $page->post_excerpt );
-			$output .= apply_filters( 'list_pages_shortcode_excerpt', $excerpt );
+			$output .= apply_filters( 'list_pages_shortcode_excerpt', $excerpt, $page, $depth, $args, $current_page );
 		}
 	}
 	
 }
 
+/**
+ * [shortcode_list_pages] Function
+ * Kept for legacy reasons in case people are using it directly.
+ */
+function shortcode_list_pages( $atts, $content, $tag ) {
+	global $List_Pages_Shortcode;
+	return $List_Pages_Shortcode->shortcode_list_pages( $atts, $content, $tag );
+}
+
 global $List_Pages_Shortcode;
 $List_Pages_Shortcode = new List_Pages_Shortcode();
-
-add_shortcode( 'child-pages', 'shortcode_list_pages' );
-add_shortcode( 'sibling-pages', 'shortcode_list_pages' );
-add_shortcode( 'list-pages', 'shortcode_list_pages' );
 
 ?>
