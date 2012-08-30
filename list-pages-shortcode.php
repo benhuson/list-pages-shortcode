@@ -88,8 +88,8 @@ class List_Pages_Shortcode {
 	 * @param string $excerpt Excerpt.
 	 * @return string Filtered excerpt.
 	 */
-	function excerpt_filter( $excerpt ) {
-		return '<div class="excerpt">' . $excerpt . '</div>';
+	function excerpt_filter( $text ) {
+		return '<div class="excerpt">' . $text . '</div>';
 	}
 	
 }
@@ -135,8 +135,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		
 		// Excerpt
 		if ( $args['excerpt'] ) {
-			$excerpt = apply_filters( 'get_the_excerpt', $page->post_excerpt );
-			$output .= apply_filters( 'list_pages_shortcode_excerpt', $excerpt, $page, $depth, $args, $current_page );
+			$output .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
 		}
 	}
 	
