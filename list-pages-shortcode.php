@@ -40,6 +40,7 @@ class List_Pages_Shortcode {
 			'exclude'     => '',
 			'include'     => '',
 			'child_of'    => $child_of,
+			'list_type'   => 'ul',
 			'title_li'    => '',
 			'authors'     => '',
 			'sort_column' => 'menu_order, post_title',
@@ -69,14 +70,14 @@ class List_Pages_Shortcode {
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 		
 		// Use custom walker
-		if ( $atts['excerpt'] ) {
+		if ( $atts['excerpt'] || $atts['list_type'] != 'ul' ) {
 			$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
 		}
 		
 		// Create output
 		$out = wp_list_pages( $atts );
 		if ( !empty( $out ) )
-			$out = '<ul class="' . $atts['class'] . '">' . $out . '</ul>';
+			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
 		
 		return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 	}
@@ -101,6 +102,30 @@ class List_Pages_Shortcode {
  * A copy of the WordPress Walker_Page class which adds an excerpt.
  */
 class List_Pages_Shortcode_Walker_Page extends Walker_Page {
+
+	/**
+	 * @see Walker::start_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of page. Used for padding.
+	 */
+	function start_lvl( &$output, $depth = 0, $args = array() ) {
+		$indent = str_repeat("\t", $depth);
+		$output .= "\n$indent<" . $args['list_type'] . " class='children'>\n";
+	}
+
+	/**
+	 * @see Walker::end_lvl()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param int $depth Depth of page. Used for padding.
+	 */
+	function end_lvl( &$output, $depth = 0, $args = array() ) {
+		$indent = str_repeat("\t", $depth);
+		$output .= "$indent</" . $args['list_type'] . ">\n";
+	}
 	
 	function start_el( &$output, $page, $depth, $args, $current_page = 0 ) {
 		if ( $depth )
