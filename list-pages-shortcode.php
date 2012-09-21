@@ -58,6 +58,7 @@ class List_Pages_Shortcode {
 		
 		// Merge user provided atts with defaults
 		$atts = shortcode_atts( $defaults, $atts );
+		$atts['title_li'] = html_entity_decode( $atts['title_li'] );
 		
 		// Set necessary params
 		$atts['echo'] = 0;
