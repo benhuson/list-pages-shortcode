@@ -23,6 +23,10 @@ Introduces the [list-pages], [sibling-pages] and [child-pages] [shortcodes](http
 
 `[list-pages exclude="17,38" class="my-page-list"]`
 
+*Show excerpt*
+
+`[list-pages excerpt="1"]`
+
 *List the current page's children, but only show the top level*
 
 `[child-pages depth="1"]`
