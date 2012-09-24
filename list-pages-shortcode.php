@@ -75,12 +75,33 @@ class List_Pages_Shortcode {
 			$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
 		}
 		
+		// Catch <ul> tags in wp_list_pages()
+		if ( $atts['list_type'] != 'ul' ) {
+			add_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10, 2 );
+		}
+		
 		// Create output
 		$out = wp_list_pages( $atts );
+		remove_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10 );
 		if ( !empty( $out ) )
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
 		
 		return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
+	}
+	
+	/**
+	 * UL 2 List Type
+	 * Replaces all <ul> tags with <{list_type}> tags.
+	 *
+	 * @param string $output Output of wp_list_pages().
+	 * @param array $args shortcode_list_pages() args.
+	 * @return string HTML output.
+	 */
+	function ul2list_type( $output, $args = null ) {
+		$output = str_replace( '<ul>', '<' . $args['list_type'] . '>', $output );
+		$output = str_replace( '<ul ', '<' . $args['list_type'] . ' ', $output );
+		$output = str_replace( '</ul> ', '</' . $args['list_type'] . '>', $output );
+		return $output;
 	}
 	
 	/**
