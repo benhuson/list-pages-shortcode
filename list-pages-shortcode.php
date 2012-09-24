@@ -92,7 +92,7 @@ class List_Pages_Shortcode {
 	 */
 	function excerpt_filter( $text ) {
 		if ( ! empty( $text ) )
-			return '<div class="excerpt">' . $text . '</div>';
+			return ' <div class="excerpt">' . $text . '</div>';
 		return $text;
 	}
 	
