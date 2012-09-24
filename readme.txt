@@ -13,7 +13,7 @@ Introduces the [list-pages], [sibling-pages] and [child-pages] shortcodes for ea
 
 Introduces the [list-pages], [sibling-pages] and [child-pages] [shortcodes](http://codex.wordpress.org/Shortcode_API) for easily displaying a list of pages within a post or page.  Both shortcodes accept all parameters that you can pass to the [`wp_list_pages()`](http://codex.wordpress.org/Template_Tags/wp_list_pages) function with the addition of a class parameter.
 
-= Usage =
+= Example Usage =
 
 *List pages sorted by title*
 
@@ -35,9 +35,32 @@ Introduces the [list-pages], [sibling-pages] and [child-pages] [shortcodes](http
 
 `[sibling-pages depth="2"]`
 
-= Please Note =
+= Default Arguments =
 
-The default values are the same as for the [`wp_list_pages()`](http://codex.wordpress.org/Template_Tags/wp_list_pages) function except for title_li which defaults to nothing.  If a class is not specified, a default class of either "list-pages", "sibling-pages" or "child-pages" is given to the UL tag.  In addition, the echo parameter has no effect.
+The default values are the same as for the [wp_list_pages()](http://codex.wordpress.org/Template_Tags/wp_list_pages) function except for title_li which defaults to nothing.  If a class is not specified, a default class of either "list-pages", "sibling-pages" or "child-pages" is given to the UL tag.  In addition, the echo parameter has no effect.
+
+In addition to the [wp_list_pages()](http://codex.wordpress.org/Template_Tags/wp_list_pages) arguments, you can also specify:
+
+* **list_type** *(string)* List tag. Defaults to `<ul>`.
+* **exclude_current_page** *(int)* Exclude the current page. Defaults to `0`.
+* **excerpt** *(int)* Show the page excerpt. Defaults to `0`.
+
+== Frequently Asked Questions ==
+
+= How do I include a page excerpt? =
+
+Firstly you will need to add support for excerpt for your pages. You can either you this by using the [add_post_type_support()](http://codex.wordpress.org/Function_Reference/add_post_type_support) function or using a plugin like [Page Excerpt](http://wordpress.org/extend/plugins/page-excerpt/).
+
+You can also use the 'list_pages_shortcode_excerpt' filter to return or customize the excerpt for specific pages. The following example:
+`<?php
+function my_list_pages_shortcode_excerpt( $excerpt, $page, $depth, $args ) {
+	return $excerpt . '...';
+}
+add_filter( 'list_pages_shortcode_excerpt', 'my_list_pages_shortcode_excerpt', 10, 4 );
+?>`
+
+You can then include the excerpt via your shortcode.
+`[list-pages excerpt="1"]`
 
 == Changelog ==
 
