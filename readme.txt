@@ -1,10 +1,11 @@
 === Plugin Name ===
-Contributors: aaron_guitar, husobj
+Contributors: husobj, aaron_guitar
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron%40freshwebs%2enet&item_name=Fotobook%20Donation&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: shortcodes, pages, list pages, sibling pages, child pages, subpages
 Requires at least: 2.5
-Tested up to: 3.4.1
-Stable tag: 1.4
+Tested up to: 3.4.2
+Stable tag: 1.5
+License: GPLv2 or later
 
 Introduces the [list-pages], [sibling-pages] and [child-pages] shortcodes for easily displaying a list of pages within a post or page.
 
@@ -35,6 +36,13 @@ Introduces the [list-pages], [sibling-pages] and [child-pages] [shortcodes](http
 The default values are the same as for the [`wp_list_pages()`](http://codex.wordpress.org/Template_Tags/wp_list_pages) function except for title_li which defaults to nothing.  If a class is not specified, a default class of either "list-pages", "sibling-pages" or "child-pages" is given to the UL tag.  In addition, the echo parameter has no effect.
 
 == Changelog ==
+
+= 1.5 =
+
+* Added support for showing excerpt `[list-pages excerpt="1"]`.
+* Allow filtering of excerpt output using 'list_pages_shortcode_excerpt' filter.
+* Added support for outputting as ordered list `[list-pages list_type="ol"]`.
+* Allow HTML in 'title_li' attribute.
 
 = 1.4 =
 
