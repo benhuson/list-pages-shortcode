@@ -24,6 +24,8 @@ class List_Pages_Shortcode {
 	function shortcode_list_pages( $atts, $content, $tag ) {
 		global $post;
 		
+		do_action( 'shortcode_list_pages_before' );
+		
 		// Child Pages
 		$child_of = 0;
 		if ( $tag == 'child-pages' )
@@ -85,8 +87,11 @@ class List_Pages_Shortcode {
 		remove_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10 );
 		if ( !empty( $out ) )
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
+		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 		
-		return apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
+		do_action( 'shortcode_list_pages_after' );
+		
+		return $out;
 	}
 	
 	/**
