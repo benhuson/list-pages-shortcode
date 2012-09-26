@@ -52,6 +52,7 @@ class List_Pages_Shortcode {
 			'exclude_tree'=> '',
 			'meta_key'    => '',
 			'meta_value'  => '',
+			'walker'      => new List_Pages_Shortcode_Walker_Page,
 			'offset'      => '',
 			'post_status' => 'publish',
 			'exclude_current_page' => 0,
@@ -71,11 +72,6 @@ class List_Pages_Shortcode {
 		}
 		
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
-		
-		// Use custom walker
-		if ( $atts['excerpt'] || $atts['list_type'] != 'ul' ) {
-			$atts['walker'] = new List_Pages_Shortcode_Walker_Page;
-		}
 		
 		// Catch <ul> tags in wp_list_pages()
 		if ( $atts['list_type'] != 'ul' ) {
