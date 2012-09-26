@@ -176,7 +176,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 
 		$css_class = implode( ' ', apply_filters( 'page_css_class', $css_class, $page, $depth, $args, $current_page ) );
 
-		$output .= $indent . '<li class="' . $css_class . '"><a href="' . get_permalink($page->ID) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
+		$item = '<a href="' . get_permalink($page->ID) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
 
 		if ( !empty($show_date) ) {
 			if ( 'modified' == $show_date )
@@ -184,13 +184,15 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			else
 				$time = $page->post_date;
 
-			$output .= " " . mysql2date($date_format, $time);
+			$item .= " " . mysql2date($date_format, $time);
 		}
 		
 		// Excerpt
 		if ( $args['excerpt'] ) {
-			$output .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
+			$item .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
 		}
+		
+		$output .= $indent . '<li class="' . $css_class . '">' . apply_filters( 'list_pages_shortcode_item', $item, $page, $depth, $args, $current_page );
 	}
 	
 }
