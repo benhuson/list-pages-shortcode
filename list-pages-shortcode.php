@@ -53,6 +53,7 @@ class List_Pages_Shortcode {
 			'meta_key'    => '',
 			'meta_value'  => '',
 			'walker'      => new List_Pages_Shortcode_Walker_Page,
+			'post_type'   => 'page',
 			'offset'      => '',
 			'post_status' => 'publish',
 			'exclude_current_page' => 0,
