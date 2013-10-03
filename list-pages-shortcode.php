@@ -151,7 +151,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		$output .= "$indent</" . $args['list_type'] . ">\n";
 	}
 	
-	function start_el( &$output, $page, $depth, $args, $current_page = 0 ) {
+	function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
 		if ( $depth )
 			$indent = str_repeat("\t", $depth);
 		else
