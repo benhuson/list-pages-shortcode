@@ -3,7 +3,7 @@ Contributors: husobj, aaron_guitar
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron%40freshwebs%2enet&item_name=Fotobook%20Donation&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: shortcodes, pages, list pages, sibling pages, child pages, subpages
 Requires at least: 2.5
-Tested up to: 3.5
+Tested up to: 3.6.1
 Stable tag: 1.6
 License: GPLv2 or later
 
@@ -66,6 +66,7 @@ You can then include the excerpt via your shortcode.
 
 = 1.6 =
 
+* Add default arg values to start_el() Walker method. Props eceleste.
 * Added `shortcode_list_pages_before` action.
 * Added `shortcode_list_pages_after` action.
 * Added `list_pages_shortcode_item` filter.
