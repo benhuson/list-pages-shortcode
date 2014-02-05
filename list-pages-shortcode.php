@@ -35,7 +35,7 @@ class List_Pages_Shortcode {
 		
 		// Set defaults
 		$defaults = array(
-			'class'       => $tag,
+			'class'       => 'list-pages-shortcode ' . $tag,
 			'depth'       => 0,
 			'show_date'   => '',
 			'date_format' => get_option( 'date_format' ),
