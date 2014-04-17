@@ -155,6 +155,16 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		$output .= "$indent</" . $args['list_type'] . ">\n";
 	}
 
+	/**
+	 * @see Walker::start_el()
+	 * @since 2.1.0
+	 *
+	 * @param string $output Passed by reference. Used to append additional content.
+	 * @param object $page Page data object.
+	 * @param int $depth Depth of page. Used for padding.
+	 * @param int $current_page Page ID.
+	 * @param array $args
+	 */
 	function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
 		if ( $depth ) {
 			$indent = str_repeat( "\t", $depth );
@@ -164,6 +174,11 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 
 		extract( $args, EXTR_SKIP );
 		$css_class = array( 'page_item', 'page-item-' . $page->ID );
+
+		if ( isset( $args['pages_with_children'][ $page->ID ] ) ) {
+			$css_class[] = 'page_item_has_children';
+		}
+
 		if ( ! empty( $current_page ) ) {
 			$_current_page = get_page( $current_page );
 			if ( in_array( $page->ID, $_current_page->ancestors ) ) {
@@ -174,11 +189,15 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			} elseif ( $_current_page && $page->ID == $_current_page->post_parent ) {
 				$css_class[] = 'current_page_parent';
 			}
-		} elseif ( $page->ID == get_option('page_for_posts') ) {
+		} elseif ( $page->ID == get_option( 'page_for_posts' ) ) {
 			$css_class[] = 'current_page_parent';
 		}
 
 		$css_class = implode( ' ', apply_filters( 'page_css_class', $css_class, $page, $depth, $args, $current_page ) );
+
+		if ( '' === $page->post_title ) {
+			$page->post_title = sprintf( __( '#%d (no title)' ), $page->ID );
+		}
 
 		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
 
