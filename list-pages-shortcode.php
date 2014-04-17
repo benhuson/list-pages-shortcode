@@ -28,36 +28,38 @@ class List_Pages_Shortcode {
 
 		// Child Pages
 		$child_of = 0;
-		if ( $tag == 'child-pages' )
+		if ( $tag == 'child-pages' ) {
 			$child_of = $post->ID;
-		if ( $tag == 'sibling-pages' )
+		}
+		if ( $tag == 'sibling-pages' ) {
 			$child_of = $post->post_parent;
+		}
 
 		// Set defaults
 		$defaults = array(
-			'class'       => 'list-pages-shortcode ' . $tag,
-			'depth'       => 0,
-			'show_date'   => '',
-			'date_format' => get_option( 'date_format' ),
-			'exclude'     => '',
-			'include'     => '',
-			'child_of'    => $child_of,
-			'list_type'   => 'ul',
-			'title_li'    => '',
-			'authors'     => '',
-			'sort_column' => 'menu_order, post_title',
-			'sort_order'  => '',
-			'link_before' => '',
-			'link_after'  => '',
-			'exclude_tree'=> '',
-			'meta_key'    => '',
-			'meta_value'  => '',
-			'walker'      => new List_Pages_Shortcode_Walker_Page,
-			'post_type'   => 'page',
-			'offset'      => '',
-			'post_status' => 'publish',
+			'class'                => 'list-pages-shortcode ' . $tag,
+			'depth'                => 0,
+			'show_date'            => '',
+			'date_format'          => get_option( 'date_format' ),
+			'exclude'              => '',
+			'include'              => '',
+			'child_of'             => $child_of,
+			'list_type'            => 'ul',
+			'title_li'             => '',
+			'authors'              => '',
+			'sort_column'          => 'menu_order, post_title',
+			'sort_order'           => '',
+			'link_before'          => '',
+			'link_after'           => '',
+			'exclude_tree'         => '',
+			'meta_key'             => '',
+			'meta_value'           => '',
+			'walker'               => new List_Pages_Shortcode_Walker_Page,
+			'post_type'            => 'page',
+			'offset'               => '',
+			'post_status'          => 'publish',
 			'exclude_current_page' => 0,
-			'excerpt'     => 0
+			'excerpt'              => 0
 		);
 
 		// Merge user provided atts with defaults
@@ -67,8 +69,9 @@ class List_Pages_Shortcode {
 		// Set necessary params
 		$atts['echo'] = 0;
 		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
-			if ( ! empty( $atts['exclude'] ) )
+			if ( ! empty( $atts['exclude'] ) ) {
 				$atts['exclude'] .= ',';
+			}
 			$atts['exclude'] .= $post->ID;
 		}
 
@@ -82,8 +85,9 @@ class List_Pages_Shortcode {
 		// Create output
 		$out = wp_list_pages( $atts );
 		remove_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10 );
-		if ( ! empty( $out ) )
+		if ( ! empty( $out ) ) {
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
+		}
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 
 		do_action( 'shortcode_list_pages_after' );
@@ -114,8 +118,9 @@ class List_Pages_Shortcode {
 	 * @return string Filtered excerpt.
 	 */
 	function excerpt_filter( $text ) {
-		if ( ! empty( $text ) )
+		if ( ! empty( $text ) ) {
 			return ' <div class="excerpt">' . $text . '</div>';
+		}
 		return $text;
 	}
 
@@ -135,7 +140,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 * @param int $depth Depth of page. Used for padding.
 	 */
 	function start_lvl( &$output, $depth = 0, $args = array() ) {
-		$indent = str_repeat("\t", $depth);
+		$indent = str_repeat( "\t", $depth );
 		$output .= "\n$indent<" . $args['list_type'] . " class='children'>\n";
 	}
 
@@ -147,41 +152,45 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 * @param int $depth Depth of page. Used for padding.
 	 */
 	function end_lvl( &$output, $depth = 0, $args = array() ) {
-		$indent = str_repeat("\t", $depth);
+		$indent = str_repeat( "\t", $depth );
 		$output .= "$indent</" . $args['list_type'] . ">\n";
 	}
 
 	function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
-		if ( $depth )
-			$indent = str_repeat("\t", $depth);
-		else
+		if ( $depth ) {
+			$indent = str_repeat( "\t", $depth );
+		} else {
 			$indent = '';
+		}
 
-		extract($args, EXTR_SKIP);
-		$css_class = array('page_item', 'page-item-'.$page->ID);
-		if ( !empty($current_page) ) {
+		extract( $args, EXTR_SKIP );
+		$css_class = array( 'page_item', 'page-item-' . $page->ID );
+		if ( ! empty( $current_page ) ) {
 			$_current_page = get_page( $current_page );
-			if ( in_array( $page->ID, $_current_page->ancestors ) )
+			if ( in_array( $page->ID, $_current_page->ancestors ) ) {
 				$css_class[] = 'current_page_ancestor';
-			if ( $page->ID == $current_page )
+			}
+			if ( $page->ID == $current_page ) {
 				$css_class[] = 'current_page_item';
-			elseif ( $_current_page && $page->ID == $_current_page->post_parent )
+			} elseif ( $_current_page && $page->ID == $_current_page->post_parent ) {
 				$css_class[] = 'current_page_parent';
+			}
 		} elseif ( $page->ID == get_option('page_for_posts') ) {
 			$css_class[] = 'current_page_parent';
 		}
 
 		$css_class = implode( ' ', apply_filters( 'page_css_class', $css_class, $page, $depth, $args, $current_page ) );
 
-		$item = '<a href="' . get_permalink($page->ID) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
+		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
 
-		if ( !empty($show_date) ) {
-			if ( 'modified' == $show_date )
+		if ( ! empty( $show_date ) ) {
+			if ( 'modified' == $show_date ) {
 				$time = $page->post_modified;
-			else
+			} else {
 				$time = $page->post_date;
+			}
 
-			$item .= " " . mysql2date($date_format, $time);
+			$item .= ' ' . mysql2date( $date_format, $time );
 		}
 
 		// Excerpt
