@@ -10,7 +10,7 @@ Author URI: http://www.aaronharp.com
 */
 
 class List_Pages_Shortcode {
-	
+
 	/**
 	 * Constructor
 	 */
@@ -20,19 +20,19 @@ class List_Pages_Shortcode {
 		add_shortcode( 'list-pages', array( $this, 'shortcode_list_pages' ) );
 		add_filter( 'list_pages_shortcode_excerpt', array( $this, 'excerpt_filter' ) );
 	}
-	
+
 	function shortcode_list_pages( $atts, $content, $tag ) {
 		global $post;
-		
+
 		do_action( 'shortcode_list_pages_before' );
-		
+
 		// Child Pages
 		$child_of = 0;
 		if ( $tag == 'child-pages' )
 			$child_of = $post->ID;
 		if ( $tag == 'sibling-pages' )
 			$child_of = $post->post_parent;
-		
+
 		// Set defaults
 		$defaults = array(
 			'class'       => 'list-pages-shortcode ' . $tag,
@@ -59,11 +59,11 @@ class List_Pages_Shortcode {
 			'exclude_current_page' => 0,
 			'excerpt'     => 0
 		);
-		
+
 		// Merge user provided atts with defaults
 		$atts = shortcode_atts( $defaults, $atts );
 		$atts['title_li'] = html_entity_decode( $atts['title_li'] );
-		
+
 		// Set necessary params
 		$atts['echo'] = 0;
 		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
@@ -71,26 +71,26 @@ class List_Pages_Shortcode {
 				$atts['exclude'] .= ',';
 			$atts['exclude'] .= $post->ID;
 		}
-		
+
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
-		
+
 		// Catch <ul> tags in wp_list_pages()
 		if ( $atts['list_type'] != 'ul' ) {
 			add_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10, 2 );
 		}
-		
+
 		// Create output
 		$out = wp_list_pages( $atts );
 		remove_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) )
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
-		
+
 		do_action( 'shortcode_list_pages_after' );
-		
+
 		return $out;
 	}
-	
+
 	/**
 	 * UL 2 List Type
 	 * Replaces all <ul> tags with <{list_type}> tags.
@@ -105,7 +105,7 @@ class List_Pages_Shortcode {
 		$output = str_replace( '</ul> ', '</' . $args['list_type'] . '>', $output );
 		return $output;
 	}
-	
+
 	/**
 	 * Excerpt Filter
 	 * Add a <div> around the excerpt by default.
@@ -118,7 +118,7 @@ class List_Pages_Shortcode {
 			return ' <div class="excerpt">' . $text . '</div>';
 		return $text;
 	}
-	
+
 }
 
 /**
@@ -150,7 +150,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		$indent = str_repeat("\t", $depth);
 		$output .= "$indent</" . $args['list_type'] . ">\n";
 	}
-	
+
 	function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
 		if ( $depth )
 			$indent = str_repeat("\t", $depth);
@@ -183,15 +183,15 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 
 			$item .= " " . mysql2date($date_format, $time);
 		}
-		
+
 		// Excerpt
 		if ( $args['excerpt'] ) {
 			$item .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
 		}
-		
+
 		$output .= $indent . '<li class="' . $css_class . '">' . apply_filters( 'list_pages_shortcode_item', $item, $page, $depth, $args, $current_page );
 	}
-	
+
 }
 
 /**
@@ -205,5 +205,3 @@ function shortcode_list_pages( $atts, $content, $tag ) {
 
 global $List_Pages_Shortcode;
 $List_Pages_Shortcode = new List_Pages_Shortcode();
-
-?>
