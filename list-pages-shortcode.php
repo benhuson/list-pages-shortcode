@@ -9,19 +9,18 @@ Version: 1.7
 Author URI: http://www.aaronharp.com
 */
 
+add_shortcode( 'child-pages', array( 'List_Pages_Shortcode', 'shortcode_list_pages' ) );
+add_shortcode( 'sibling-pages', array( 'List_Pages_Shortcode', 'shortcode_list_pages' ) );
+add_shortcode( 'list-pages', array( 'List_Pages_Shortcode', 'shortcode_list_pages' ) );
+add_filter( 'list_pages_shortcode_excerpt', array( 'List_Pages_Shortcode', 'excerpt_filter' ) );
+
 class List_Pages_Shortcode {
 
-	/**
-	 * Constructor
-	 */
 	function List_Pages_Shortcode() {
-		add_shortcode( 'child-pages', array( $this, 'shortcode_list_pages' ) );
-		add_shortcode( 'sibling-pages', array( $this, 'shortcode_list_pages' ) );
-		add_shortcode( 'list-pages', array( $this, 'shortcode_list_pages' ) );
-		add_filter( 'list_pages_shortcode_excerpt', array( $this, 'excerpt_filter' ) );
+		// @todo  Deprecate use of constructor
 	}
 
-	function shortcode_list_pages( $atts, $content, $tag ) {
+	static function shortcode_list_pages( $atts, $content, $tag ) {
 		global $post;
 
 		do_action( 'shortcode_list_pages_before' );
@@ -79,12 +78,12 @@ class List_Pages_Shortcode {
 
 		// Catch <ul> tags in wp_list_pages()
 		if ( $atts['list_type'] != 'ul' ) {
-			add_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10, 2 );
+			add_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10, 2 );
 		}
 
 		// Create output
 		$out = wp_list_pages( $atts );
-		remove_filter( 'wp_list_pages', array( $this, 'ul2list_type' ), 10 );
+		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) ) {
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
 		}
@@ -103,7 +102,7 @@ class List_Pages_Shortcode {
 	 * @param array $args shortcode_list_pages() args.
 	 * @return string HTML output.
 	 */
-	function ul2list_type( $output, $args = null ) {
+	static function ul2list_type( $output, $args = null ) {
 		$output = str_replace( '<ul>', '<' . $args['list_type'] . '>', $output );
 		$output = str_replace( '<ul ', '<' . $args['list_type'] . ' ', $output );
 		$output = str_replace( '</ul> ', '</' . $args['list_type'] . '>', $output );
@@ -117,7 +116,7 @@ class List_Pages_Shortcode {
 	 * @param string $excerpt Excerpt.
 	 * @return string Filtered excerpt.
 	 */
-	function excerpt_filter( $text ) {
+	static function excerpt_filter( $text ) {
 		if ( ! empty( $text ) ) {
 			return ' <div class="excerpt">' . $text . '</div>';
 		}
@@ -208,9 +207,9 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
  * Kept for legacy reasons in case people are using it directly.
  */
 function shortcode_list_pages( $atts, $content, $tag ) {
-	global $List_Pages_Shortcode;
-	return $List_Pages_Shortcode->shortcode_list_pages( $atts, $content, $tag );
+	return List_Pages_Shortcode::shortcode_list_pages( $atts, $content, $tag );
 }
 
+// @todo  Deprecate instance
 global $List_Pages_Shortcode;
 $List_Pages_Shortcode = new List_Pages_Shortcode();
