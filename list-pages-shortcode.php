@@ -77,14 +77,18 @@ class List_Pages_Shortcode {
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 
 		// Catch <ul> tags in wp_list_pages()
-		if ( $atts['list_type'] != 'ul' ) {
+		if ( $atts['list_type'] != 'ul' && ! empty( $atts['list_type']) ) {
 			add_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10, 2 );
 		}
 
 		// Create output
-		$out = wp_list_pages( $atts );
+		$list_pages_atts = $atts;
+		if ( empty( $list_pages_atts['list_type'] ) ) {
+			$list_pages_atts['list_type'] = 'ul';
+		}
+		$out = wp_list_pages( $list_pages_atts );
 		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
-		if ( ! empty( $out ) ) {
+		if ( ! empty( $out ) && ! empty( $atts['list_type'] ) ) {
 			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
 		}
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
@@ -103,9 +107,11 @@ class List_Pages_Shortcode {
 	 * @return string HTML output.
 	 */
 	static function ul2list_type( $output, $args = null ) {
-		$output = str_replace( '<ul>', '<' . $args['list_type'] . '>', $output );
-		$output = str_replace( '<ul ', '<' . $args['list_type'] . ' ', $output );
-		$output = str_replace( '</ul> ', '</' . $args['list_type'] . '>', $output );
+		if ( ! empty( $args['list_type'] ) ) {
+			$output = str_replace( '<ul>', '<' . $args['list_type'] . '>', $output );
+			$output = str_replace( '<ul ', '<' . $args['list_type'] . ' ', $output );
+			$output = str_replace( '</ul> ', '</' . $args['list_type'] . '>', $output );
+		}
 		return $output;
 	}
 
@@ -140,7 +146,8 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 */
 	function start_lvl( &$output, $depth = 0, $args = array() ) {
 		$indent = str_repeat( "\t", $depth );
-		$output .= "\n$indent<" . $args['list_type'] . " class='children'>\n";
+		$list_type = empty( $args['list_type'] ) ? 'ul' : $args['list_type'];
+		$output .= "\n$indent<" . $list_type . " class='children'>\n";
 	}
 
 	/**
@@ -152,7 +159,8 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 */
 	function end_lvl( &$output, $depth = 0, $args = array() ) {
 		$indent = str_repeat( "\t", $depth );
-		$output .= "$indent</" . $args['list_type'] . ">\n";
+		$list_type = empty( $args['list_type'] ) ? 'ul' : $args['list_type'];
+		$output .= "$indent</" . $list_type . ">\n";
 	}
 
 	/**
