@@ -23,7 +23,7 @@ class List_Pages_Shortcode {
 	static function shortcode_list_pages( $atts, $content, $tag ) {
 		global $post;
 
-		do_action( 'shortcode_list_pages_before' );
+		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
 
 		// Child Pages
 		$child_of = 0;
@@ -93,7 +93,7 @@ class List_Pages_Shortcode {
 		}
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 
-		do_action( 'shortcode_list_pages_after' );
+		do_action( 'shortcode_list_pages_after', $atts, $content, $tag );
 
 		return $out;
 	}
