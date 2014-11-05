@@ -23,7 +23,7 @@ Introduces the [list-pages], [sibling-pages] and [child-pages] [shortcodes](http
 
 `[list-pages exclude="17,38" class="my-page-list"]`
 
-*Show excerpt*
+*Show excerpt (for pages excerpt support will need adding manually or via the [Page Excerpt](https://wordpress.org/plugins/page-excerpt/) plugin)*
 
 `[list-pages excerpt="1"]`
 
