@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron
 Tags: shortcodes, pages, list pages, sibling pages, child pages, subpages
 Requires at least: 3.5
 Tested up to: 4.2
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 License: GPLv2 or later
 
 Introduces the [list-pages], [sibling-pages] and [child-pages] shortcodes for easily displaying a list of pages within a post or page.
@@ -70,6 +70,11 @@ You can then include the excerpt via your shortcode.
 
 == Changelog ==
 
+= 1.7.2 =
+
+* Add short code arguments to the shortcode_list_pages_before/after actions.
+* Checked WordPress 4.2 compatibility.
+
 = 1.7.1 =
 
 * When no list type specified don't wrap in list tags.
@@ -120,40 +125,29 @@ You can then include the excerpt via your shortcode.
 
 == Upgrade Notice ==
 
-= 1.7.1 =
+= 1.7.2 =
+Add short code arguments to the shortcode_list_pages_before/after actions.
 
-* When no list type specified don't wrap in list tags.
-* Update List_Pages_Shortcode_Walker_Page class with changes made to the WordPress Walker_Page class.
-* Checked WordPress 3.9 compatibility.
+= 1.7.1 =
+Update List_Pages_Shortcode_Walker_Page class with changes made to the WordPress Walker_Page class.
 
 = 1.7 =
-
 Add 'list-pages-shortcode' class to all lists.
 
 = 1.6 =
-
-* Add default arg values to start_el() Walker method. Props eceleste.
-* Added `shortcode_list_pages_before` action.
-* Added `shortcode_list_pages_after` action.
-* Added `list_pages_shortcode_item` filter.
-* Allow specifying of `post_type`.
+Added `shortcode_list_pages_before` and `shortcode_list_pages_after` actions and `list_pages_shortcode_item` filter.
 
 = 1.5 =
-
 Added support for showing excerpt and filtering of excerpt output using 'list_pages_shortcode_excerpt' filter. Added support for outputting as ordered list.
 
 = 1.4 =
-
 Added support for 'post_status'.
 
 = 1.3 =
-
 Added 'shortcode_list_pages_attributes' filter and allow 'child_of' to be overridden by shortcode parameter.
 
 = 1.2 =
-
 Added support for extra wp_list_pages() parameters: include, sort_order, meta_key, meta_value and offset.
 
 = 1.1 =
-
 Added 'shortcode_list_pages' filter and [sibling-pages] shortcode.
