@@ -16,8 +16,12 @@ add_filter( 'list_pages_shortcode_excerpt', array( 'List_Pages_Shortcode', 'exce
 
 class List_Pages_Shortcode {
 
-	function List_Pages_Shortcode() {
+	public function __construct() {
 		// @todo  Deprecate use of constructor
+	}
+
+	public function List_Pages_Shortcode() {
+		// @todo  Deprecate use of PHP4 constructor
 	}
 
 	static function shortcode_list_pages( $atts, $content, $tag ) {
