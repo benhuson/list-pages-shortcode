@@ -154,7 +154,7 @@ class List_Pages_Shortcode {
 	 * @param   string  $list_type  List type tag.
 	 * @return  string              Valid tag.
 	 */
-	private static function validate_list_type( $list_type ) {
+	public static function validate_list_type( $list_type ) {
 
 		if ( empty( $list_type ) || ! in_array( $list_type, array( 'ul', 'div', 'span', 'article', 'aside', 'section' ) ) ) {
 			$list_type = 'ul';
