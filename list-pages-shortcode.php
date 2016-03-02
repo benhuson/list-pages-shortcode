@@ -31,11 +31,14 @@ class List_Pages_Shortcode {
 
 		// Child Pages
 		$child_of = 0;
+		$post_type = 'page';
 		if ( $tag == 'child-pages' ) {
 			$child_of = $post->ID;
+			$post_type = get_post_type( $post );
 		}
 		if ( $tag == 'sibling-pages' ) {
 			$child_of = $post->post_parent;
+			$post_type = get_post_type( $post->post_parent );
 		}
 
 		// Set defaults
@@ -58,7 +61,7 @@ class List_Pages_Shortcode {
 			'meta_key'             => '',
 			'meta_value'           => '',
 			'walker'               => new List_Pages_Shortcode_Walker_Page,
-			'post_type'            => 'page',
+			'post_type'            => $post_type,
 			'offset'               => '',
 			'post_status'          => 'publish',
 			'exclude_current_page' => 0,
