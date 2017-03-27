@@ -77,7 +77,7 @@ You can then include the excerpt via your shortcode.
 = 1.7.3 =
 
 * Use PHP7 constructors.
-* Validate list type and convert <li> tags if not <ul> list type.
+* Validate list type and convert `<li>` tags if not `<ul>` list type.
 * Checked WordPress 4.4.2 compatibility.
 
 = 1.7.2 =
