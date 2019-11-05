@@ -3,7 +3,7 @@ Contributors: husobj, aaron_guitar
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron%40freshwebs%2enet&item_name=Fotobook%20Donation&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: shortcodes, pages, list pages, sibling pages, child pages, subpages
 Requires at least: 3.5
-Tested up to: 4.4.2
+Tested up to: 5.2
 Stable tag: 1.7.4
 License: GPLv2 or later
 
@@ -77,7 +77,7 @@ You can then include the excerpt via your shortcode.
 = 1.7.3 =
 
 * Use PHP7 constructors.
-* Validate list type and convert <li> tags if not <ul> list type.
+* Validate list type and convert `<li>` tags if not `<ul>` list type.
 * Checked WordPress 4.4.2 compatibility.
 
 = 1.7.2 =
