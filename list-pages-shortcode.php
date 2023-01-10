@@ -80,6 +80,9 @@ class List_Pages_Shortcode {
 
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 
+		$classes = explode( ' ', $atts['class'] );
+		$atts['class'] = implode( ' ', array_map( 'sanitize_html_class', $classes ) );
+
 		// Catch <ul> tags in wp_list_pages()
 		$atts['list_type'] = self::validate_list_type( $atts['list_type'] );
 		if ( 'ul' != $atts['list_type'] ) {
@@ -94,7 +97,7 @@ class List_Pages_Shortcode {
 		$out = wp_list_pages( $list_pages_atts );
 		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) && ! empty( $atts['list_type'] ) ) {
-			$out = '<' . $atts['list_type'] . ' class="' . $atts['class'] . '">' . $out . '</' . $atts['list_type'] . '>';
+			$out = '<' . $atts['list_type'] . ' class="' . esc_attr( $atts['class'] ) . '">' . $out . '</' . $atts['list_type'] . '>';
 		}
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 
@@ -143,7 +146,7 @@ class List_Pages_Shortcode {
 	 */
 	static function excerpt_filter( $text ) {
 		if ( ! empty( $text ) ) {
-			return ' <div class="excerpt">' . $text . '</div>';
+			return ' <div class="excerpt">' . wp_kses( $text, 'post' ) . '</div>';
 		}
 		return $text;
 	}
