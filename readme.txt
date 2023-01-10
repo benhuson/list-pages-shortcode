@@ -3,8 +3,8 @@ Contributors: husobj, aaron_guitar
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron%40freshwebs%2enet&item_name=Fotobook%20Donation&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: shortcodes, pages, list pages, sibling pages, child pages, subpages
 Requires at least: 3.5
-Tested up to: 5.2
-Stable tag: 1.7.4
+Tested up to: 6.1.1
+Stable tag: 1.7.5
 License: GPLv2 or later
 
 Introduces the [list-pages], [sibling-pages] and [child-pages] shortcodes for easily displaying a list of pages within a post or page.
@@ -70,6 +70,10 @@ You can then include the excerpt via your shortcode.
 
 == Changelog ==
 
+= 1.7.5 =
+
+* Security Update: Sanitize HTML attributes before outputting.
+
 = 1.7.4 =
 
 * Fix fatal error: validate_list_type() needs to be public!
@@ -134,6 +138,10 @@ You can then include the excerpt via your shortcode.
 * First release.
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+
+Security Update: Sanitize HTML attributes before outputting.
 
 = 1.7.2 =
 Add short code arguments to the shortcode_list_pages_before/after actions.
