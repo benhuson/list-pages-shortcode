@@ -218,7 +218,6 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			$indent = '';
 		}
 
-		extract( $args, EXTR_SKIP );
 		$css_class = array( 'page_item', 'page-item-' . $page->ID );
 
 		if ( isset( $args['pages_with_children'][ $page->ID ] ) ) {
@@ -245,16 +244,20 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			$page->post_title = sprintf( __( '#%d (no title)' ), $page->ID );
 		}
 
-		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $link_before . apply_filters( 'the_title', $page->post_title, $page->ID ) . $link_after . '</a>';
+		$args['link_before'] = empty( $args['link_before'] ) ? '' : $args['link_before'];
+		$args['link_after']  = empty( $args['link_after'] ) ? '' : $args['link_after'];
 
-		if ( ! empty( $show_date ) ) {
-			if ( 'modified' == $show_date ) {
+		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $args['link_before'] . apply_filters( 'the_title', $page->post_title, $page->ID ) . $args['link_after'] . '</a>';
+
+		if ( ! empty( $args['show_date'] ) ) {
+			if ( 'modified' == $args['show_date'] ) {
 				$time = $page->post_modified;
 			} else {
 				$time = $page->post_date;
 			}
 
-			$item .= ' ' . mysql2date( $date_format, $time );
+			$date_format = empty( $args['date_format'] ) ? '' : $args['date_format'];
+			$item       .= ' ' . mysql2date( $date_format, $time );
 		}
 
 		// Excerpt.
