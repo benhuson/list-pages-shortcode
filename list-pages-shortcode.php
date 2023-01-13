@@ -31,10 +31,10 @@ class List_Pages_Shortcode {
 
 		// Child pages.
 		$child_of = 0;
-		if ( $tag == 'child-pages' ) {
+		if ( 'child-pages' === $tag ) {
 			$child_of = $post->ID;
 		}
-		if ( $tag == 'sibling-pages' ) {
+		if ( 'sibling-pages' === $tag ) {
 			$child_of = $post->post_parent;
 		}
 
@@ -85,7 +85,7 @@ class List_Pages_Shortcode {
 
 		// Catch <ul> tags in wp_list_pages().
 		$atts['list_type'] = self::validate_list_type( $atts['list_type'] );
-		if ( 'ul' != $atts['list_type'] ) {
+		if ( 'ul' !== $atts['list_type'] ) {
 			add_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10, 2 );
 		}
 
@@ -118,7 +118,7 @@ class List_Pages_Shortcode {
 
 		$list_type = self::validate_list_type( $args['list_type'] );
 
-		if ( 'ul' != $list_type ) {
+		if ( 'ul' !== $list_type ) {
 
 			// <ul>
 			$output = str_replace( '<ul>', '<' . $list_type . '>', $output );
@@ -126,7 +126,7 @@ class List_Pages_Shortcode {
 			$output = str_replace( '</ul> ', '</' . $list_type . '>', $output );
 
 			// <li>
-			$list_type = 'span' == $list_type ? 'span' : 'div';
+			$list_type = 'span' === $list_type ? 'span' : 'div';
 			$output    = str_replace( '<li>', '<' . $list_type . '>', $output );
 			$output    = str_replace( '<li ', '<' . $list_type . ' ', $output );
 			$output    = str_replace( '</li> ', '</' . $list_type . '>', $output );
@@ -159,7 +159,7 @@ class List_Pages_Shortcode {
 	 */
 	public static function validate_list_type( $list_type ) {
 
-		if ( empty( $list_type ) || ! in_array( $list_type, array( 'ul', 'div', 'span', 'article', 'aside', 'section' ) ) ) {
+		if ( empty( $list_type ) || ! in_array( $list_type, array( 'ul', 'div', 'span', 'article', 'aside', 'section' ), true ) ) {
 			$list_type = 'ul';
 		}
 
@@ -226,15 +226,15 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 
 		if ( ! empty( $current_page ) ) {
 			$_current_page = get_page( $current_page );
-			if ( in_array( $page->ID, $_current_page->ancestors ) ) {
+			if ( in_array( $page->ID, $_current_page->ancestors, true ) ) {
 				$css_class[] = 'current_page_ancestor';
 			}
-			if ( $page->ID == $current_page ) {
+			if ( $page->ID === $current_page ) {
 				$css_class[] = 'current_page_item';
-			} elseif ( $_current_page && $page->ID == $_current_page->post_parent ) {
+			} elseif ( $_current_page && $page->ID === $_current_page->post_parent ) {
 				$css_class[] = 'current_page_parent';
 			}
-		} elseif ( $page->ID == get_option( 'page_for_posts' ) ) {
+		} elseif ( absint( get_option( 'page_for_posts' ) ) === $page->ID ) {
 			$css_class[] = 'current_page_parent';
 		}
 
@@ -250,7 +250,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $args['link_before'] . apply_filters( 'the_title', $page->post_title, $page->ID ) . $args['link_after'] . '</a>';
 
 		if ( ! empty( $args['show_date'] ) ) {
-			if ( 'modified' == $args['show_date'] ) {
+			if ( 'modified' === $args['show_date'] ) {
 				$time = $page->post_modified;
 			} else {
 				$time = $page->post_date;
