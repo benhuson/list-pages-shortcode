@@ -24,12 +24,12 @@ class List_Pages_Shortcode {
 		// @todo  Deprecate use of PHP4 constructor
 	}
 
-	static function shortcode_list_pages( $atts, $content, $tag ) {
+	public static function shortcode_list_pages( $atts, $content, $tag ) {
 		global $post;
 
 		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
 
-		// Child Pages
+		// Child pages.
 		$child_of = 0;
 		if ( $tag == 'child-pages' ) {
 			$child_of = $post->ID;
@@ -38,7 +38,7 @@ class List_Pages_Shortcode {
 			$child_of = $post->post_parent;
 		}
 
-		// Set defaults
+		// Set defaults.
 		$defaults = array(
 			'class'                => 'list-pages-shortcode ' . $tag,
 			'depth'                => 0,
@@ -57,19 +57,19 @@ class List_Pages_Shortcode {
 			'exclude_tree'         => '',
 			'meta_key'             => '',
 			'meta_value'           => '',
-			'walker'               => new List_Pages_Shortcode_Walker_Page,
+			'walker'               => new List_Pages_Shortcode_Walker_Page(),
 			'post_type'            => 'page',
 			'offset'               => '',
 			'post_status'          => 'publish',
 			'exclude_current_page' => 0,
-			'excerpt'              => 0
+			'excerpt'              => 0,
 		);
 
-		// Merge user provided atts with defaults
-		$atts = shortcode_atts( $defaults, $atts );
+		// Merge user provided atts with defaults.
+		$atts             = shortcode_atts( $defaults, $atts );
 		$atts['title_li'] = html_entity_decode( $atts['title_li'] );
 
-		// Set necessary params
+		// Set necessary params.
 		$atts['echo'] = 0;
 		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
 			if ( ! empty( $atts['exclude'] ) ) {
@@ -80,16 +80,16 @@ class List_Pages_Shortcode {
 
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 
-		$classes = explode( ' ', $atts['class'] );
+		$classes       = explode( ' ', $atts['class'] );
 		$atts['class'] = implode( ' ', array_map( 'sanitize_html_class', $classes ) );
 
-		// Catch <ul> tags in wp_list_pages()
+		// Catch <ul> tags in wp_list_pages().
 		$atts['list_type'] = self::validate_list_type( $atts['list_type'] );
 		if ( 'ul' != $atts['list_type'] ) {
 			add_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10, 2 );
 		}
 
-		// Create output
+		// Create output.
 		$list_pages_atts = $atts;
 		if ( empty( $list_pages_atts['list_type'] ) ) {
 			$list_pages_atts['list_type'] = 'ul';
@@ -110,11 +110,11 @@ class List_Pages_Shortcode {
 	 * UL 2 List Type
 	 * Replaces all <ul> tags with <{list_type}> tags.
 	 *
-	 * @param string $output Output of wp_list_pages().
-	 * @param array $args shortcode_list_pages() args.
+	 * @param  string $output Output of wp_list_pages().
+	 * @param  array  $args shortcode_list_pages() args.
 	 * @return string HTML output.
 	 */
-	static function ul2list_type( $output, $args = null ) {
+	public static function ul2list_type( $output, $args = null ) {
 
 		$list_type = self::validate_list_type( $args['list_type'] );
 
@@ -127,9 +127,9 @@ class List_Pages_Shortcode {
 
 			// <li>
 			$list_type = 'span' == $list_type ? 'span' : 'div';
-			$output = str_replace( '<li>', '<' . $list_type . '>', $output );
-			$output = str_replace( '<li ', '<' . $list_type . ' ', $output );
-			$output = str_replace( '</li> ', '</' . $list_type . '>', $output );
+			$output    = str_replace( '<li>', '<' . $list_type . '>', $output );
+			$output    = str_replace( '<li ', '<' . $list_type . ' ', $output );
+			$output    = str_replace( '</li> ', '</' . $list_type . '>', $output );
 
 		}
 
@@ -141,10 +141,10 @@ class List_Pages_Shortcode {
 	 * Excerpt Filter
 	 * Add a <div> around the excerpt by default.
 	 *
-	 * @param string $excerpt Excerpt.
+	 * @param string $text Excerpt.
 	 * @return string Filtered excerpt.
 	 */
-	static function excerpt_filter( $text ) {
+	public static function excerpt_filter( $text ) {
 		if ( ! empty( $text ) ) {
 			return ' <div class="excerpt">' . wp_kses( $text, 'post' ) . '</div>';
 		}
@@ -154,8 +154,8 @@ class List_Pages_Shortcode {
 	/**
 	 * Validate List Type
 	 *
-	 * @param   string  $list_type  List type tag.
-	 * @return  string              Valid tag.
+	 * @param  string $list_type  List type tag.
+	 * @return string              Valid tag.
 	 */
 	public static function validate_list_type( $list_type ) {
 
@@ -180,12 +180,12 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 * @since 2.1.0
 	 *
 	 * @param string $output Passed by reference. Used to append additional content.
-	 * @param int $depth Depth of page. Used for padding.
+	 * @param int    $depth Depth of page. Used for padding.
 	 */
-	function start_lvl( &$output, $depth = 0, $args = array() ) {
-		$indent = str_repeat( "\t", $depth );
+	public function start_lvl( &$output, $depth = 0, $args = array() ) {
+		$indent    = str_repeat( "\t", $depth );
 		$list_type = List_Pages_Shortcode::validate_list_type( $args['list_type'] );
-		$output .= "\n$indent<" . $list_type . " class='children'>\n";
+		$output   .= "\n$indent<" . $list_type . " class='children'>\n";
 	}
 
 	/**
@@ -193,12 +193,12 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 * @since 2.1.0
 	 *
 	 * @param string $output Passed by reference. Used to append additional content.
-	 * @param int $depth Depth of page. Used for padding.
+	 * @param int    $depth Depth of page. Used for padding.
 	 */
-	function end_lvl( &$output, $depth = 0, $args = array() ) {
-		$indent = str_repeat( "\t", $depth );
+	public function end_lvl( &$output, $depth = 0, $args = array() ) {
+		$indent    = str_repeat( "\t", $depth );
 		$list_type = List_Pages_Shortcode::validate_list_type( $args['list_type'] );
-		$output .= "$indent</" . $list_type . ">\n";
+		$output   .= "$indent</" . $list_type . ">\n";
 	}
 
 	/**
@@ -207,11 +207,11 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 	 *
 	 * @param string $output Passed by reference. Used to append additional content.
 	 * @param object $page Page data object.
-	 * @param int $depth Depth of page. Used for padding.
-	 * @param int $current_page Page ID.
-	 * @param array $args
+	 * @param int    $depth Depth of page. Used for padding.
+	 * @param array  $args
+	 * @param int    $current_page Page ID.
 	 */
-	function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
+	public function start_el( &$output, $page, $depth = 0, $args = array(), $current_page = 0 ) {
 		if ( $depth ) {
 			$indent = str_repeat( "\t", $depth );
 		} else {
@@ -257,7 +257,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			$item .= ' ' . mysql2date( $date_format, $time );
 		}
 
-		// Excerpt
+		// Excerpt.
 		if ( $args['excerpt'] ) {
 			$item .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
 		}
