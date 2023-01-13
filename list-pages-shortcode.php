@@ -83,17 +83,16 @@ class List_Pages_Shortcode {
 		$classes       = explode( ' ', $atts['class'] );
 		$atts['class'] = implode( ' ', array_map( 'sanitize_html_class', $classes ) );
 
-		// Catch <ul> tags in wp_list_pages().
+		// Validation.
 		$atts['list_type'] = self::validate_list_type( $atts['list_type'] );
+
+		// Catch <ul> tags in wp_list_pages().
 		if ( 'ul' !== $atts['list_type'] ) {
 			add_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10, 2 );
 		}
 
 		// Create output.
 		$list_pages_atts = $atts;
-		if ( empty( $list_pages_atts['list_type'] ) ) {
-			$list_pages_atts['list_type'] = 'ul';
-		}
 		$out = wp_list_pages( $list_pages_atts );
 		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) && ! empty( $atts['list_type'] ) ) {
@@ -159,11 +158,11 @@ class List_Pages_Shortcode {
 	 */
 	public static function validate_list_type( $list_type ) {
 
-		if ( empty( $list_type ) || ! in_array( $list_type, array( 'ul', 'div', 'span', 'article', 'aside', 'section' ), true ) ) {
-			$list_type = 'ul';
+		if ( ! empty( $list_type ) && in_array( $list_type, array( 'ul', 'div', 'span', 'article', 'aside', 'section' ), true ) ) {
+			return $list_type;
 		}
 
-		return $list_type;
+		return 'ul';
 
 	}
 
