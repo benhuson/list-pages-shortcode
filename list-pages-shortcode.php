@@ -29,15 +29,6 @@ class List_Pages_Shortcode {
 
 		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
 
-		// Child pages.
-		$child_of = 0;
-		if ( 'child-pages' === $tag ) {
-			$child_of = $post->ID;
-		}
-		if ( 'sibling-pages' === $tag ) {
-			$child_of = $post->post_parent;
-		}
-
 		// Set defaults.
 		$defaults = array(
 			'class'                => 'list-pages-shortcode ' . $tag,
@@ -46,7 +37,7 @@ class List_Pages_Shortcode {
 			'date_format'          => get_option( 'date_format' ),
 			'exclude'              => '',
 			'include'              => '',
-			'child_of'             => $child_of,
+			'child_of'             => self::get_default_child_of( $tag ),
 			'list_type'            => 'ul',
 			'title_li'             => '',
 			'authors'              => '',
@@ -103,6 +94,20 @@ class List_Pages_Shortcode {
 		do_action( 'shortcode_list_pages_after', $atts, $content, $tag );
 
 		return $out;
+	}
+
+	protected static function get_default_child_of( $tag ) {
+
+		$post = get_post();
+
+		if ( 'child-pages' === $tag ) {
+			return $post->ID;
+		} elseif ( 'sibling-pages' === $tag ) {
+			return $post->post_parent;
+		}
+
+		return 0;
+
 	}
 
 	/**
