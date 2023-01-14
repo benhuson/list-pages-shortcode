@@ -76,7 +76,6 @@ class List_Pages_Shortcode {
 			'meta_value'           => '',
 			'post_type'            => 'page',
 			'offset'               => '',
-			//'post_status'          => 'publish',
 			'exclude_current_page' => 0,
 			'excerpt'              => 0,
 		);
