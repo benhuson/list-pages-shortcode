@@ -29,24 +29,9 @@ class List_Pages_Shortcode {
 		global $post;
 
 		$atts = self::parse_shortcode_atts( $atts, $tag );
-
-		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
-
-		// Set necessary params.
-		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
-			if ( ! empty( $atts['exclude'] ) ) {
-				$atts['exclude'] .= ',';
-			}
-			$atts['exclude'] .= $post->ID;
-		}
-
 		$atts = apply_filters( 'shortcode_list_pages_attributes', $atts, $content, $tag );
 
-		$classes       = explode( ' ', $atts['class'] );
-		$atts['class'] = implode( ' ', array_map( 'sanitize_html_class', $classes ) );
-
-		// Validation.
-		$atts['list_type'] = self::validate_list_type( $atts['list_type'] );
+		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
 
 		// Catch <ul> tags in wp_list_pages().
 		if ( 'ul' !== $atts['list_type'] ) {
@@ -54,17 +39,18 @@ class List_Pages_Shortcode {
 		}
 
 		// Create output.
-		$list_pages_atts = $atts;
-		$out = wp_list_pages( $list_pages_atts );
+		$atts = self::prepare_list_pages_atts( $atts, $tag );
+		$out = wp_list_pages( $atts );
 		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) && ! empty( $atts['list_type'] ) ) {
-			$out = '<' . $atts['list_type'] . ' class="' . esc_attr( $atts['class'] ) . '">' . $out . '</' . $atts['list_type'] . '>';
+			$out = '<' . sanitize_key( $atts['list_type'] ) . ' class="' . esc_attr( $atts['class'] ) . '">' . $out . '</' . sanitize_key( $atts['list_type'] ) . '>';
 		}
 		$out = apply_filters( 'shortcode_list_pages', $out, $atts, $content, $tag );
 
 		do_action( 'shortcode_list_pages_after', $atts, $content, $tag );
 
 		return $out;
+
 	}
 
 	protected static function parse_shortcode_atts( $atts, $tag ) {
@@ -122,7 +108,25 @@ class List_Pages_Shortcode {
 
 		// Extra attributes.
 		$atts['walker'] = new List_Pages_Shortcode_Walker_Page();
+
+		return $atts;
+
+	}
+
+	protected static function prepare_list_pages_atts( $atts, $tag  ) {
+
+		global $post;
+
+		// Don't echo list pages output.
 		$atts['echo'] = 0;
+
+		// Exclude current page.
+		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
+			if ( ! empty( $atts['exclude'] ) ) {
+				$atts['exclude'] .= ',';
+			}
+			$atts['exclude'] .= absint( $post->ID );
+		}
 
 		return $atts;
 
