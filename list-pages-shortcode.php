@@ -25,43 +25,14 @@ class List_Pages_Shortcode {
 	}
 
 	public static function shortcode_list_pages( $atts, $content, $tag ) {
+
 		global $post;
+
+		$atts = self::parse_shortcode_atts( $atts, $tag );
 
 		do_action( 'shortcode_list_pages_before', $atts, $content, $tag );
 
-		// Set defaults.
-		$defaults = array(
-			'class'                => 'list-pages-shortcode ' . $tag,
-			'depth'                => 0,
-			'show_date'            => '',
-			'date_format'          => get_option( 'date_format' ),
-			'exclude'              => '',
-			'include'              => '',
-			'child_of'             => self::get_default_child_of( $tag ),
-			'list_type'            => 'ul',
-			'title_li'             => '',
-			'authors'              => '',
-			'sort_column'          => 'menu_order, post_title',
-			'sort_order'           => '',
-			'link_before'          => '',
-			'link_after'           => '',
-			'exclude_tree'         => '',
-			'meta_key'             => '',
-			'meta_value'           => '',
-			'walker'               => new List_Pages_Shortcode_Walker_Page(),
-			'post_type'            => 'page',
-			'offset'               => '',
-			'post_status'          => 'publish',
-			'exclude_current_page' => 0,
-			'excerpt'              => 0,
-		);
-
-		// Merge user provided atts with defaults.
-		$atts             = shortcode_atts( $defaults, $atts );
-		$atts['title_li'] = html_entity_decode( $atts['title_li'] );
-
 		// Set necessary params.
-		$atts['echo'] = 0;
 		if ( $atts['exclude_current_page'] && absint( $post->ID ) ) {
 			if ( ! empty( $atts['exclude'] ) ) {
 				$atts['exclude'] .= ',';
@@ -94,6 +65,99 @@ class List_Pages_Shortcode {
 		do_action( 'shortcode_list_pages_after', $atts, $content, $tag );
 
 		return $out;
+	}
+
+	protected static function parse_shortcode_atts( $atts, $tag ) {
+
+		// Allowed shortcode attributes.
+		$defaults = array(
+			'class'                => 'list-pages-shortcode ' . $tag,
+			'depth'                => 0,
+			'show_date'            => '',
+			'date_format'          => get_option( 'date_format' ),
+			'exclude'              => '',
+			'include'              => '',
+			'child_of'             => self::get_default_child_of( $tag ),
+			'list_type'            => 'ul',
+			'title_li'             => '',
+			'authors'              => '',
+			'sort_column'          => 'menu_order, post_title',
+			'sort_order'           => '',
+			'link_before'          => '',
+			'link_after'           => '',
+			'exclude_tree'         => '',
+			'meta_key'             => '',
+			'meta_value'           => '',
+			'post_type'            => 'page',
+			'offset'               => '',
+			//'post_status'          => 'publish',
+			'exclude_current_page' => 0,
+			'excerpt'              => 0,
+		);
+
+		$atts = shortcode_atts( $defaults, $atts );
+
+		// Validate/sanitize attributes.
+		$atts['class']                = self::sanitize_html_classes( $atts['class'] );
+		$atts['depth']                = absint( $atts['depth'] );
+		$atts['show_date']            = sanitize_text_field( $atts['show_date'] );
+		$atts['date_format']          = sanitize_text_field( $atts['date_format'] );
+		$atts['exclude']              = '' !== $atts['exclude'] ? self::sanitize_absints_string( $atts['exclude'] ) : '';
+		$atts['include']              = '' !== $atts['include'] ? self::sanitize_absints_string( $atts['include'] ) : '';
+		$atts['child_of']             = absint( $atts['child_of'] );
+		$atts['list_type']            = self::validate_list_type( $atts['list_type'] );
+		$atts['title_li']             = '' !== $atts['title_li'] ? wp_kses_post( $atts['title_li'] ) : '';
+		$atts['authors']              = '' !== $atts['authors'] ? self::sanitize_absints_string( $atts['authors'] ) : '';
+		// sort_column
+		$atts['sort_order']           = 'DESC' === strtoupper( $atts['sort_order'] ) ? 'DESC' : 'ASC';
+		$atts['link_before']          = '' !== $atts['link_before'] ? wp_kses_post( $atts['link_before'] ) : '';
+		$atts['link_after']           = '' !== $atts['link_after'] ? wp_kses_post( $atts['link_after'] ) : '';
+		$atts['exclude_tree']         = '' !== $atts['exclude_tree'] ? self::sanitize_absints_string( $atts['exclude_tree'] ) : '';
+		$atts['meta_key']             = sanitize_key( $atts['meta_key'] );
+		$atts['meta_value']           = sanitize_text_field( $atts['meta_value'] );
+		$atts['post_type']            = self::validate_post_type( $atts['post_type'] );
+		$atts['offset']               = absint( $atts['offset'] );
+		$atts['exclude_current_page'] = absint( $atts['exclude_current_page'] );
+		$atts['excerpt']              = absint( $atts['excerpt'] );
+
+		// Extra attributes.
+		$atts['walker'] = new List_Pages_Shortcode_Walker_Page();
+		$atts['echo'] = 0;
+
+		return $atts;
+
+	}
+
+	protected static function sanitize_html_classes( $class ) {
+
+		$class = array_map( 'sanitize_html_class', explode( ' ', $class ) );
+
+		return implode( ' ', $class );
+
+	}
+
+	protected static function sanitize_absints_string( $value ) {
+
+		if ( '' !== $value ) {
+			$values = explode( ',', $value );
+			$values = array_map( 'absint', array_map( 'trim', $values ) );
+			return implode( ',', array_filter( $values ) );
+		}
+
+		return $value;
+
+	}
+
+	protected static function validate_post_type( $post_type ) {
+
+		$post_type = sanitize_key( $post_type );
+
+		if ( post_type_exists( $post_type ) && is_post_type_viewable( $post_type ) ) {
+			return $post_type;
+		}
+
+		return '';
+
 	}
 
 	protected static function get_default_child_of( $tag ) {
