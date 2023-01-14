@@ -94,7 +94,7 @@ class List_Pages_Shortcode {
 		$atts['list_type']            = self::validate_list_type( $atts['list_type'] );
 		$atts['title_li']             = '' !== $atts['title_li'] ? wp_kses_post( $atts['title_li'] ) : '';
 		$atts['authors']              = '' !== $atts['authors'] ? self::sanitize_absints_string( $atts['authors'] ) : '';
-		// sort_column
+		$atts['sort_column']          = self::validate_sort_column( $atts['sort_column'] );
 		$atts['sort_order']           = 'DESC' === strtoupper( $atts['sort_order'] ) ? 'DESC' : 'ASC';
 		$atts['link_before']          = '' !== $atts['link_before'] ? wp_kses_post( $atts['link_before'] ) : '';
 		$atts['link_after']           = '' !== $atts['link_after'] ? wp_kses_post( $atts['link_after'] ) : '';
@@ -149,6 +149,31 @@ class List_Pages_Shortcode {
 		}
 
 		return $value;
+
+	}
+
+	protected static function validate_sort_column( $sort_column ) {
+
+		$valid_columns = array(
+			'post_author',
+			'post_date',
+			'post_title',
+			'post_name',
+			'post_modified',
+			'post_modified_gmt',
+			'menu_order',
+			'post_parent',
+			'ID',
+			'rand',
+			'comment_count',
+			'post_title',
+		);
+
+		if ( in_array( $sort_column, $valid_columns ) ) {
+			return $sort_column;
+		}
+
+		return 'post_title';
 
 	}
 
