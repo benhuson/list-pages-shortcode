@@ -342,8 +342,8 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			$page->post_title = sprintf( __( '#%d (no title)' ), $page->ID );
 		}
 
-		$args['link_before'] = empty( $args['link_before'] ) ? '' : $args['link_before'];
-		$args['link_after']  = empty( $args['link_after'] ) ? '' : $args['link_after'];
+		$args['link_before'] = empty( $args['link_before'] ) ? '' : wp_kses_post( $args['link_before'] );
+		$args['link_after']  = empty( $args['link_after'] ) ? '' : wp_kses_post( $args['link_after'] );
 
 		$item = '<a href="' . get_permalink( $page->ID ) . '">' . $args['link_before'] . apply_filters( 'the_title', $page->post_title, $page->ID ) . $args['link_after'] . '</a>';
 
@@ -363,7 +363,7 @@ class List_Pages_Shortcode_Walker_Page extends Walker_Page {
 			$item .= apply_filters( 'list_pages_shortcode_excerpt', $page->post_excerpt, $page, $depth, $args, $current_page );
 		}
 
-		$output .= $indent . '<li class="' . $css_class . '">' . apply_filters( 'list_pages_shortcode_item', $item, $page, $depth, $args, $current_page );
+		$output .= $indent . '<li class="' . esc_attr( $css_class ) . '">' . apply_filters( 'list_pages_shortcode_item', $item, $page, $depth, $args, $current_page );
 	}
 
 }
