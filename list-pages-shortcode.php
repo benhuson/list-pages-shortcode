@@ -222,10 +222,12 @@ class List_Pages_Shortcode {
 			$output = str_replace( '</ul> ', '</' . $list_type . '>', $output );
 
 			// <li>
-			$list_type = 'span' === $list_type ? 'span' : 'div';
-			$output    = str_replace( '<li>', '<' . $list_type . '>', $output );
-			$output    = str_replace( '<li ', '<' . $list_type . ' ', $output );
-			$output    = str_replace( '</li> ', '</' . $list_type . '>', $output );
+			if ( 'ol' !== $list_type ) {
+				$list_type = 'span' === $list_type ? 'span' : 'div';
+				$output    = str_replace( '<li>', '<' . $list_type . '>', $output );
+				$output    = str_replace( '<li ', '<' . $list_type . ' ', $output );
+				$output    = str_replace( '</li> ', '</' . $list_type . '>', $output );
+			}
 
 		}
 
