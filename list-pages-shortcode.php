@@ -1,13 +1,13 @@
 <?php
 
-/*
-Plugin Name: List Pages Shortcode
-Plugin URI: http://wordpress.org/extend/plugins/list-pages-shortcode/
-Description: Introduces the [list-pages], [sibling-pages] and [child-pages] <a href="http://codex.wordpress.org/Shortcode_API">shortcodes</a> for easily displaying a list of pages within a post or page.  Both shortcodes accept all parameters that you can pass to the <a href="http://codex.wordpress.org/Template_Tags/wp_list_pages">wp_list_pages()</a> function.  For example, to show a page's child pages sorted by title simply add [child-pages sort_column="post_title"] in the page's content.
-Author: Ben Huson, Aaron Harp
-Version: 1.7.5
-Author URI: http://www.aaronharp.com
-*/
+/**
+ * Plugin Name: List Pages Shortcode
+ * Plugin URI: http://wordpress.org/extend/plugins/list-pages-shortcode/
+ * Description: Introduces the [list-pages], [sibling-pages] and [child-pages] <a href="http://codex.wordpress.org/Shortcode_API">shortcodes</a> for easily displaying a list of pages within a post or page.  Both shortcodes accept all parameters that you can pass to the <a href="http://codex.wordpress.org/Template_Tags/wp_list_pages">wp_list_pages()</a> function.  For example, to show a page's child pages sorted by title simply add [child-pages sort_column="post_title"] in the page's content.
+ * Author: Ben Huson, Aaron Harp
+ * Version: 1.7.5
+ * Author URI: http://www.aaronharp.com
+ */
 
 add_shortcode( 'child-pages', array( 'List_Pages_Shortcode', 'shortcode_list_pages' ) );
 add_shortcode( 'sibling-pages', array( 'List_Pages_Shortcode', 'shortcode_list_pages' ) );
@@ -40,7 +40,7 @@ class List_Pages_Shortcode {
 
 		// Create output.
 		$atts = self::prepare_list_pages_atts( $atts, $tag );
-		$out = wp_list_pages( $atts );
+		$out  = wp_list_pages( $atts );
 		remove_filter( 'wp_list_pages', array( 'List_Pages_Shortcode', 'ul2list_type' ), 10 );
 		if ( ! empty( $out ) && ! empty( $atts['list_type'] ) ) {
 			$out = '<' . sanitize_key( $atts['list_type'] ) . ' class="' . esc_attr( $atts['class'] ) . '">' . $out . '</' . sanitize_key( $atts['list_type'] ) . '>';
@@ -112,7 +112,7 @@ class List_Pages_Shortcode {
 
 	}
 
-	protected static function prepare_list_pages_atts( $atts, $tag  ) {
+	protected static function prepare_list_pages_atts( $atts, $tag ) {
 
 		global $post;
 
