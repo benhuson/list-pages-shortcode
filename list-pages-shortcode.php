@@ -168,8 +168,13 @@ class List_Pages_Shortcode {
 			'post_title',
 		);
 
-		if ( in_array( $sort_column, $valid_columns ) ) {
-			return $sort_column;
+		$sort_columns = explode( ',', $sort_column );
+		$sort_columns = array_map( 'trim', $sort_columns );
+
+		$validated_columns = array_intersect( $sort_columns, $valid_columns );
+
+		if ( ! empty( $validated_columns ) ) {
+			return implode( ',', $validated_columns );
 		}
 
 		return 'post_title';
